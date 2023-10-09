@@ -1,13 +1,16 @@
 
 import React, { useState } from "react";
 
-const TreeNode = ({ node, onDragStart, onDragOver, onDrop }) => {
+const TreeNode = ({ node, onDragStart, onDragOver, onDrop,onDelete }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
-
+const deleteNode=(nodeToDelete)=>{
+  // const updatedTreeData = node.filter((node) => node.key !== nodeToDelete.key);
+  //   setTreeData(updatedTreeData);
+}
   return (
     <div
       draggable
@@ -25,7 +28,7 @@ const TreeNode = ({ node, onDragStart, onDragOver, onDrop }) => {
         >
           {isDropdownOpen ? <i class="fa-solid fa-caret-down" style={{marginLeft: "10px"}}></i> :<i class="fa-solid fa-caret-right" style={{marginLeft: "10px"}}></i>}
         </span>
-        {node.title}
+        {node.title} &emsp; <i class="fa-solid fa-trash" style={{color: "#fe240b"}} onClick={() => onDelete(node.key)}></i>
       </div>
       {isDropdownOpen && (
         <div style={{ marginLeft: "20px" }}>
@@ -38,6 +41,7 @@ const TreeNode = ({ node, onDragStart, onDragOver, onDrop }) => {
                 onDragStart={onDragStart}
                 onDragOver={onDragOver}
                 onDrop={onDrop}
+                onDelete={onDelete}
               />
             ))}
         </div>
@@ -46,7 +50,7 @@ const TreeNode = ({ node, onDragStart, onDragOver, onDrop }) => {
   );
 };
 
-const Tree = ({ data, onDragStart, onDragOver, onDrop }) => {
+const Tree = ({ data, onDragStart, onDragOver, onDrop ,onDeleteNode}) => {
   return (
     <div>
       {data.map((node) => (
@@ -56,6 +60,7 @@ const Tree = ({ data, onDragStart, onDragOver, onDrop }) => {
           onDragStart={onDragStart}
           onDragOver={onDragOver}
           onDrop={onDrop}
+          onDelete={onDeleteNode}
         />
       ))}
     </div>

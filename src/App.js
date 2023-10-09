@@ -26,8 +26,14 @@ const App = () => {
       children: [],
     },
   ];
-
+ 
   const [data, setData] = useState(initialData);
+  const handleDeleteNode = (key) => {
+    // Filter out the node with the specified key and update the tree data
+    const updatedTreeData = data.filter((node) => node.key !== key);
+    setData(updatedTreeData);
+  };
+ 
   var isDragging = false;
 
   const handleDragStart = (draggedNode, e) => {
@@ -91,12 +97,13 @@ const App = () => {
 
   return (
     <div>
-      <h1>Draggable Tree</h1>
+      <h1>Draggable Tree</h1><br></br>
       <Tree
         data={data}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
+        onDeleteNode={handleDeleteNode}
       />
     </div>
   );
