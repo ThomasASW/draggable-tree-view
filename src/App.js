@@ -37,8 +37,6 @@
 
 // export default App;
 
-
-
 // import React from 'react';
 // import Tree from './Tree';
 // import "./App.css"
@@ -85,7 +83,6 @@
 // };
 
 // export default App;
-
 
 // import React, { useState } from 'react';
 // import Tree from './Tree';
@@ -138,39 +135,44 @@
 // };
 
 // export default App;
-import React, { useState } from 'react';
-import Tree from './Tree';
+import React, { useState } from "react";
+import Tree from "./Tree";
 
 const App = () => {
   const initialData = [
     {
-      key: '1',
-      title: 'Node 1',
+      key: "1",
+      title: "Node 1",
       children: [
         {
-          key: '1-1',
-          title: 'Node 1.1',
+          key: "1-1",
+          title: "Node 1.1",
           children: [],
         },
         {
-          key: '1-2',
-          title: 'Node 1.2',
+          key: "1-2",
+          title: "Node 1.2",
           children: [],
         },
       ],
     },
     {
-      key: '2',
-      title: 'Node 2',
+      key: "2",
+      title: "Node 2",
       children: [],
     },
   ];
 
   const [data, setData] = useState(initialData);
+  var isDragging = false;
 
   const handleDragStart = (draggedNode, e) => {
+    if (isDragging) {
+      return;
+    }
     // Store the dragged node for later use
-    e.dataTransfer.setData('text/plain', JSON.stringify(draggedNode));
+    e.dataTransfer.setData("text/plain", JSON.stringify(draggedNode));
+    isDragging = true;
   };
 
   const handleDragOver = (targetNode, e) => {
@@ -183,35 +185,20 @@ const App = () => {
     e.preventDefault();
 
     // Get the dragged node data from the data transfer object
-    const draggedNode = JSON.parse(e.dataTransfer.getData('text/plain'));
+    const draggedNode = JSON.parse(e.dataTransfer.getData("text/plain"));
+    console.log(draggedNode);
 
     // Clone the current data state to avoid mutating the state directly
     const newData = [...data];
 
-    // Find the target node in the tree
-    const findNode = (nodes, key) => {
-      for (let node of nodes) {
-        if (node.key === key) {
-          return node;
-        }
-        if (node.children && node.children.length > 0) {
-          const foundNode = findNode(node.children, key);
-          if (foundNode) {
-            return foundNode;
-          }
-        }
-      }
-      return null;
-    };
-
-    // Find the dragged node in the tree
-    const sourceNode = findNode(newData, draggedNode.key);
-
     // Remove the dragged node from its original position
     const removeNode = (nodes, key) => {
       for (let i = 0; i < nodes.length; i++) {
+        console.log(nodes[i]);
+        console.log(key);
         if (nodes[i].key === key) {
           nodes.splice(i, 1);
+          console.log(nodes);
           return true;
         }
         if (nodes[i].children && nodes[i].children.length > 0) {
@@ -224,13 +211,15 @@ const App = () => {
 
     // Remove the dragged node from its original position
     removeNode(newData, draggedNode.key);
+    console.log(newData);
 
     // Add the dragged node to the target node's children
     if (!targetNode.children) {
       targetNode.children = [];
     }
 
-    targetNode.children.push(sourceNode);
+    targetNode.children.push(draggedNode);
+    console.log(targetNode);
 
     // Update the state with the new tree structure
     setData(newData);
@@ -239,7 +228,12 @@ const App = () => {
   return (
     <div>
       <h1>Draggable Tree</h1>
-      <Tree data={data} onDragStart={handleDragStart} onDragOver={handleDragOver} onDrop={handleDrop} />
+      <Tree
+        data={data}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      />
     </div>
   );
 };

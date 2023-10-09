@@ -7,8 +7,6 @@
 
 // export default Tree;
 
-
-
 // import React, { useState } from 'react';
 
 // const TreeNode = ({ node, onDragStart, onDragOver, onDrop }) => {
@@ -76,8 +74,6 @@
 
 // export default Tree;
 
-
-
 // import React from 'react';
 // import TreeNode from './TreeNode';
 
@@ -141,7 +137,6 @@
 
 // const TreeNode = ({ node, dragEnabled, onDragStart, onDragOver, onDrop }) => {
 //   const [isExpanded, setIsExpanded] = useState(false);
-
 
 //   const toggleDropdown = () => {
 //     setDropdownOpen(!isDropdownOpen);
@@ -254,7 +249,7 @@
 // };
 
 // export default Tree;
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const TreeNode = ({ node, onDragStart, onDragOver, onDrop }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -266,18 +261,24 @@ const TreeNode = ({ node, onDragStart, onDragOver, onDrop }) => {
   return (
     <div
       draggable
-      onDragStart={(e) => onDragStart(node, e)}
+      onDragStart={(e) => {
+        console.log(node, "drag started");
+        onDragStart(node, e);
+      }}
       onDragOver={(e) => onDragOver(node, e)}
       onDrop={(e) => onDrop(node, e)}
     >
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span onClick={toggleDropdown} style={{ cursor: 'pointer', marginRight: '8px' }}>
-          {isDropdownOpen ? '-' : '+'}
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <span
+          onClick={toggleDropdown}
+          style={{ cursor: "pointer", marginRight: "8px" }}
+        >
+          {isDropdownOpen ? "-" : "+"}
         </span>
         {node.title}
       </div>
       {isDropdownOpen && (
-        <div style={{ marginLeft: '20px' }}>
+        <div style={{ marginLeft: "20px" }}>
           {node.children &&
             node.children.length > 0 &&
             node.children.map((child) => (
@@ -299,7 +300,13 @@ const Tree = ({ data, onDragStart, onDragOver, onDrop }) => {
   return (
     <div>
       {data.map((node) => (
-        <TreeNode key={node.key} node={node} onDragStart={onDragStart} onDragOver={onDragOver} onDrop={onDrop} />
+        <TreeNode
+          key={node.key}
+          node={node}
+          onDragStart={onDragStart}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
+        />
       ))}
     </div>
   );
