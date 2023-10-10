@@ -23,6 +23,34 @@ const App = () => {
     {
       key: "2",
       title: "Node 2",
+      children: [
+        {
+          key: "2-1",
+          title: "Node 2.1",
+          children: [
+            {
+              key: "2-1-1",
+              title: "Node 2.1.1",
+              children: [],
+            },
+            {
+              key: "2-1-2",
+              title: "Node 2.1.2",
+              children: [],
+            },
+          ],
+        },
+        {
+          key: "2-2",
+          title: "Node 2.2",
+          children: [],
+        },
+      ],
+    }
+    ,
+    {
+      key: "3",
+      title: "Node 3",
       children: [],
     },
   ];
@@ -57,7 +85,26 @@ const App = () => {
   // Update the state with the new tree structure
   setData(newData);
   };
- 
+  const handleEditNode = (key, newTitle) => {
+    const editNode = (nodes) => {
+      for (let i = 0; i < nodes.length; i++) {
+        if (nodes[i].key === key) {
+          nodes[i].title = newTitle;
+          return true;
+        }
+        if (nodes[i].children && nodes[i].children.length > 0) {
+          const nodeEdited = editNode(nodes[i].children);
+          if (nodeEdited) return true;
+        }
+      }
+      return false;
+    };
+  
+    const newData = [...data];
+    editNode(newData);
+    setData(newData);
+  };
+  
   var isDragging = false;
 
   const handleDragStart = (draggedNode, e) => {
@@ -128,6 +175,7 @@ const App = () => {
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         onDeleteNode={handleDeleteNode}
+        onEditNode={handleEditNode}
       />
     </div>
   );
