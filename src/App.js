@@ -29,9 +29,33 @@ const App = () => {
  
   const [data, setData] = useState(initialData);
   const handleDeleteNode = (key) => {
-    // Filter out the node with the specified key and update the tree data
-    const updatedTreeData = data.filter((node) => node.key !== key);
-    setData(updatedTreeData);
+
+  //   console.log(`Deleting node with key: ${key}`);
+  //   const updatedTreeData = data.filter((node) => node.key !== key);
+  //   console.log(data);
+  //   setData(updatedTreeData);
+  const removeNode = (nodes, targetKey) => {
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i].key === targetKey) {
+        nodes.splice(i, 1);
+        return true;
+      }
+      if (nodes[i].children && nodes[i].children.length > 0) {
+        const nodeRemoved = removeNode(nodes[i].children, targetKey);
+        if (nodeRemoved) return true;
+      }
+    }
+    return false;
+  };
+
+  // Clone the current data state to avoid mutating the state directly
+  const newData = [...data];
+
+  // Remove the node with the specified key
+  removeNode(newData, key);
+
+  // Update the state with the new tree structure
+  setData(newData);
   };
  
   var isDragging = false;
