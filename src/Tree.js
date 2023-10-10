@@ -59,6 +59,7 @@ const TreeNode = ({
               className="fa-solid fa-caret-down"
               style={{ marginLeft: "10px" }}
             ></i>
+            
           ) : (
             <i
               className="fa-solid fa-caret-right"

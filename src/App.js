@@ -56,6 +56,23 @@ const App = () => {
   ];
  
   const [data, setData] = useState(initialData);
+  const [newNodeTitle, setNewNodeTitle] = useState("");
+
+  const handleAddNode = () => {
+    // Create a new node with a unique key (you can use a library like uuid to generate unique keys)
+    const newNode = {
+      key: Date.now().toString(), // Example: using timestamp as the key
+      title: newNodeTitle,
+      children: [],
+    };
+
+    // Update the data state to include the new node
+    setData([...data, newNode]);
+
+    // Clear the input field after adding the node
+    setNewNodeTitle("");
+  };
+
   const handleDeleteNode = (key) => {
 
   //   console.log(`Deleting node with key: ${key}`);
@@ -169,6 +186,15 @@ const App = () => {
   return (
     <div>
       <h1>Draggable Tree</h1><br></br>
+      <div>
+        <input
+          type="text"
+          value={newNodeTitle}
+          onChange={(e) => setNewNodeTitle(e.target.value)}
+          placeholder="Enter node title"
+        />
+        <button onClick={handleAddNode}>Add Node</button>
+      </div>
       <Tree
         data={data}
         onDragStart={handleDragStart}
