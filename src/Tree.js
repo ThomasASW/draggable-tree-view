@@ -1,16 +1,15 @@
-
 import React, { useState } from "react";
 
-const TreeNode = ({ node, onDragStart, onDragOver, onDrop,onDelete }) => {
+const TreeNode = ({ node, onDragStart, onDragOver, onDrop, onDelete }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
-const deleteNode=(nodeToDelete)=>{
-  // const updatedTreeData = node.filter((node) => node.key !== nodeToDelete.key);
-  //   setTreeData(updatedTreeData);
-}
+  const deleteNode = (nodeToDelete) => {
+    // const updatedTreeData = node.filter((node) => node.key !== nodeToDelete.key);
+    //   setTreeData(updatedTreeData);
+  };
   return (
     <div
       draggable
@@ -26,9 +25,26 @@ const deleteNode=(nodeToDelete)=>{
           onClick={toggleDropdown}
           style={{ cursor: "pointer", marginRight: "10px" }}
         >
-          {isDropdownOpen ? <i class="fa-solid fa-caret-down" style={{marginLeft: "10px"}}></i> :<i class="fa-solid fa-caret-right" style={{marginLeft: "10px"}}></i>}
+          {node.children.length <= 0 ? (
+            <></>
+          ) : isDropdownOpen ? (
+            <i
+              class="fa-solid fa-caret-down"
+              style={{ marginLeft: "10px" }}
+            ></i>
+          ) : (
+            <i
+              class="fa-solid fa-caret-right"
+              style={{ marginLeft: "10px" }}
+            ></i>
+          )}
         </span>
-        {node.title} &emsp; <i class="fa-solid fa-trash" style={{color: "grey"}} onClick={() => onDelete(node.key)}></i>
+        {node.title} &emsp;{" "}
+        <i
+          class="fa-solid fa-trash"
+          style={{ color: "grey" }}
+          onClick={() => onDelete(node.key)}
+        ></i>
       </div>
       {isDropdownOpen && (
         <div style={{ marginLeft: "20px" }}>
@@ -50,7 +66,7 @@ const deleteNode=(nodeToDelete)=>{
   );
 };
 
-const Tree = ({ data, onDragStart, onDragOver, onDrop ,onDeleteNode}) => {
+const Tree = ({ data, onDragStart, onDragOver, onDrop, onDeleteNode }) => {
   return (
     <div>
       {data.map((node) => (
