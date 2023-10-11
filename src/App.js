@@ -27,18 +27,7 @@ const App = () => {
         {
           key: "2-1",
           title: "Node 2.1",
-          children: [
-            {
-              key: "2-1-1",
-              title: "Node 2.1.1",
-              children: [],
-            },
-            {
-              key: "2-1-2",
-              title: "Node 2.1.2",
-              children: [],
-            },
-          ],
+          children: [],
         },
         {
           key: "2-2",
