@@ -27,9 +27,7 @@ const App = () => {
         {
           key: "2-1",
           title: "Node 2.1",
-          children: [
-         
-          ],
+          children: [],
         },
         {
           key: "2-2",
