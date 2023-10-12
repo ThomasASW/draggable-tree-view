@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 // import Tree from "./Tree";
 
@@ -35,15 +34,14 @@ const App = () => {
           children: [],
         },
       ],
-    }
-    ,
+    },
     {
       key: "3",
       title: "Node 3",
       children: [],
     },
   ];
- 
+
   const [data, setData] = useState(initialData);
   const [newNodeTitle, setNewNodeTitle] = useState("");
 
@@ -56,40 +54,44 @@ const App = () => {
     };
 
     // Update the data state to include the new node
-    setData([...data, newNode]);
+    // for (let i = 0; i < data.length; i++) {
+    const title = data.find((data) => data.title === newNode.title);
+    if (title) {
+      alert("Please enter different name");
+      setNewNodeTitle("");
+    } else {
+      setData([...data, newNode]);
+    }
 
     // Clear the input field after adding the node
     setNewNodeTitle("");
   };
 
   const handleDeleteNode = (key) => {
-
-  //   console.log(`Deleting node with key: ${key}`);
-  //   const updatedTreeData = data.filter((node) => node.key !== key);
-  //   console.log(data);
-  //   setData(updatedTreeData);
-  const removeNode = (nodes, targetKey) => {
-    for (let i = 0; i < nodes.length; i++) {
-      if (nodes[i].key === targetKey) {
-        nodes.splice(i, 1);
-        return true;
+    //   console.log(`Deleting node with key: ${key}`);
+    //   const updatedTreeData = data.filter((node) => node.key !== key);
+    //   console.log(data);
+    //   setData(updatedTreeData);
+    const removeNode = (nodes, targetKey) => {
+      for (let i = 0; i < nodes.length; i++) {
+        if (nodes[i].key === targetKey) {
+          nodes.splice(i, 1);
+          return true;
+        }
+        if (nodes[i].children && nodes[i].children.length > 0) {
+          const nodeRemoved = removeNode(nodes[i].children, targetKey);
+          if (nodeRemoved) return true;
+        }
       }
-      if (nodes[i].children && nodes[i].children.length > 0) {
-        const nodeRemoved = removeNode(nodes[i].children, targetKey);
-        if (nodeRemoved) return true;
-      }
-    }
-    return false;
-  };
+      return false;
+    };
 
- 
-  const newData = [...data];
+    const newData = [...data];
 
-  // Remove the node with the specified key
-  removeNode(newData, key);
+    // Remove the node with the specified key
+    removeNode(newData, key);
 
- 
-  setData(newData);
+    setData(newData);
   };
   const handleEditNode = (key, newTitle) => {
     const editNode = (nodes) => {
@@ -105,37 +107,33 @@ const App = () => {
       }
       return false;
     };
-  
+
     const newData = [...data];
     editNode(newData);
     setData(newData);
   };
-  
+
   var isDragging = false;
 
   const handleDragStart = (draggedNode, e) => {
     if (isDragging) {
       return;
     }
-  
+
     e.dataTransfer.setData("text/plain", JSON.stringify(draggedNode));
     isDragging = true;
   };
 
   const handleDragOver = (targetNode, e) => {
-  
     e.preventDefault();
   };
 
   const handleDrop = (targetNode, e) => {
-  
     e.preventDefault();
 
-    
     const draggedNode = JSON.parse(e.dataTransfer.getData("text/plain"));
     console.log(draggedNode);
 
-  
     const newData = [...data];
 
     // Remove the dragged node from its original position
@@ -160,7 +158,6 @@ const App = () => {
     removeNode(newData, draggedNode.key);
     console.log(newData);
 
-  
     if (!targetNode.children) {
       targetNode.children = [];
     }
@@ -168,13 +165,13 @@ const App = () => {
     targetNode.children.push(draggedNode);
     console.log(targetNode);
 
-
     setData(newData);
   };
 
   return (
     <div>
-      <h1>Draggable Tree</h1><br></br>
+      <h1>Draggable Tree</h1>
+      <br></br>
       <div>
         <input
           type="text"
@@ -249,52 +246,44 @@ const TreeNode = ({
             ""
           )}
 
-          { node.children.length > 0 && isDropdownOpen ? (
+          {node.children.length > 0 && isDropdownOpen ? (
             <i
               className="fa-solid fa-caret-down"
               style={{ marginLeft: "10px" }}
             ></i>
-            
           ) : (
             // <i
             //   className="fa-solid fa-caret-right"
             //   style={{ marginLeft: "10px" }}
             // ></i>
-         ""
-    
+            ""
           )}
-        
-        { node.children.length > 0 && !isDropdownOpen ? (
-           <i
+
+          {node.children.length > 0 && !isDropdownOpen ? (
+            <i
               className="fa-solid fa-caret-right"
               style={{ marginLeft: "10px" }}
             ></i>
-            
           ) : (
-           ""
+            ""
           )}
-           { node.children.length === 0 && !isDropdownOpen ? (
-           <i
-              className="fa"
-              style={{ marginLeft: "17px" }}
-            ></i>
-            
+          {node.children.length === 0 && !isDropdownOpen ? (
+            <i className="fa" style={{ marginLeft: "17px" }}></i>
           ) : (
-           ""
+            ""
           )}
         </span>
         {node.title} &emsp;{" "}
         <i
           className="fa-solid fa-trash"
           style={{ color: "grey" }}
-          
           onClick={() => onDelete(node.key)}
         ></i>
         &emsp;
         <i
           className="fas fa-edit"
           style={{ color: "dark grey" }}
-          onClick={() =>setEditing(true)}
+          onClick={() => setEditing(true)}
         ></i>
       </div>
       {isDropdownOpen && (
