@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import Tree from "./Tree";
+// import Tree from "./Tree";
 
 const App = () => {
   const initialData = [
@@ -28,16 +28,7 @@ const App = () => {
           key: "2-1",
           title: "Node 2.1",
           children: [
-            {
-              key: "2-1-1",
-              title: "Node 2.1.1",
-              children: [],
-            },
-            {
-              key: "2-1-2",
-              title: "Node 2.1.2",
-              children: [],
-            },
+         
           ],
         },
         {
@@ -61,7 +52,7 @@ const App = () => {
   const handleAddNode = () => {
     // Create a new node with a unique key (you can use a library like uuid to generate unique keys)
     const newNode = {
-      key: Date.now().toString(), // Example: using timestamp as the key
+      key: Date.now().toString(),
       title: newNodeTitle,
       children: [],
     };
@@ -93,13 +84,13 @@ const App = () => {
     return false;
   };
 
-  // Clone the current data state to avoid mutating the state directly
+ 
   const newData = [...data];
 
   // Remove the node with the specified key
   removeNode(newData, key);
 
-  // Update the state with the new tree structure
+ 
   setData(newData);
   };
   const handleEditNode = (key, newTitle) => {
@@ -128,25 +119,25 @@ const App = () => {
     if (isDragging) {
       return;
     }
-    // Store the dragged node for later use
+  
     e.dataTransfer.setData("text/plain", JSON.stringify(draggedNode));
     isDragging = true;
   };
 
   const handleDragOver = (targetNode, e) => {
-    // Prevent default behavior to allow drop
+  
     e.preventDefault();
   };
 
   const handleDrop = (targetNode, e) => {
-    // Prevent the default drop behavior
+  
     e.preventDefault();
 
-    // Get the dragged node data from the data transfer object
+    
     const draggedNode = JSON.parse(e.dataTransfer.getData("text/plain"));
     console.log(draggedNode);
 
-    // Clone the current data state to avoid mutating the state directly
+  
     const newData = [...data];
 
     // Remove the dragged node from its original position
@@ -171,7 +162,7 @@ const App = () => {
     removeNode(newData, draggedNode.key);
     console.log(newData);
 
-    // Add the dragged node to the target node's children
+  
     if (!targetNode.children) {
       targetNode.children = [];
     }
@@ -179,7 +170,7 @@ const App = () => {
     targetNode.children.push(draggedNode);
     console.log(targetNode);
 
-    // Update the state with the new tree structure
+
     setData(newData);
   };
 
@@ -206,5 +197,151 @@ const App = () => {
     </div>
   );
 };
+const TreeNode = ({
+  node,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDelete,
+  onEditNode,
+}) => {
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
 
+  const toggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
+  };
+
+  const [isEditing, setEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(node.title);
+
+  const handleEditInputChange = (e) => {
+    setEditedTitle(e.target.value);
+  };
+
+  const handleEditSave = () => {
+    onEditNode(node.key, editedTitle);
+    setEditing(false);
+  };
+
+  return (
+    <div
+      draggable
+      onDragStart={(e) => {
+        console.log(node, "drag started");
+        onDragStart(node, e);
+      }}
+      onDragOver={(e) => onDragOver(node, e)}
+      onDrop={(e) => onDrop(node, e)}
+    >
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <span
+          onClick={toggleDropdown}
+          style={{ cursor: "pointer", marginRight: "10px" }}
+        >
+          {isEditing ? (
+            <div>
+              <input
+                type="text"
+                value={editedTitle}
+                onChange={handleEditInputChange}
+              />
+              <button onClick={handleEditSave}>Save</button>
+            </div>
+          ) : (
+            ""
+          )}
+
+          { node.children.length > 0 && isDropdownOpen ? (
+            <i
+              className="fa-solid fa-caret-down"
+              style={{ marginLeft: "10px" }}
+            ></i>
+            
+          ) : (
+            // <i
+            //   className="fa-solid fa-caret-right"
+            //   style={{ marginLeft: "10px" }}
+            // ></i>
+         ""
+    
+          )}
+        
+        { node.children.length > 0 && !isDropdownOpen ? (
+           <i
+              className="fa-solid fa-caret-right"
+              style={{ marginLeft: "10px" }}
+            ></i>
+            
+          ) : (
+           ""
+          )}
+           { node.children.length === 0 && !isDropdownOpen ? (
+           <i
+              className="fa"
+              style={{ marginLeft: "17px" }}
+            ></i>
+            
+          ) : (
+           ""
+          )}
+        </span>
+        {node.title} &emsp;{" "}
+        <i
+          className="fa-solid fa-trash"
+          style={{ color: "grey" }}
+          
+          onClick={() => onDelete(node.key)}
+        ></i>
+        &emsp;
+        <i
+          className="fas fa-edit"
+          style={{ color: "dark grey" }}
+          onClick={() =>setEditing(true)}
+        ></i>
+      </div>
+      {isDropdownOpen && (
+        <div style={{ marginLeft: "20px" }}>
+          {node.children &&
+            node.children.length > 0 &&
+            node.children.map((child) => (
+              <TreeNode
+                key={child.key}
+                node={child}
+                onDragStart={onDragStart}
+                onDragOver={onDragOver}
+                onDrop={onDrop}
+                onDelete={onDelete}
+                onEditNode={onEditNode}
+              />
+            ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Tree = ({
+  data,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDeleteNode,
+  onEditNode,
+}) => {
+  return (
+    <div>
+      {data.map((node) => (
+        <TreeNode
+          key={node.key}
+          node={node}
+          onDragStart={onDragStart}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
+          onDelete={onDeleteNode}
+          onEditNode={onEditNode}
+        />
+      ))}
+    </div>
+  );
+};
 export default App;
