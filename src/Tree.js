@@ -154,4 +154,18 @@ const Tree = ({
   );
 };
 
+const removeNode = (nodes, targetKey) => {
+  for (let i = 0; i < nodes.length; i++) {
+    if (nodes[i].key === targetKey) {
+      nodes.splice(i, 1);
+      return true;
+    }
+    if (nodes[i].children && nodes[i].children.length > 0) {
+      const nodeRemoved = removeNode(nodes[i].children, targetKey);
+      if (nodeRemoved) return true;
+    }
+  }
+  return false;
+};
+
 export default Tree;
