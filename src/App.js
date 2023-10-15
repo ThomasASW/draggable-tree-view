@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Tree from "./Tree";
 import { useEffect } from "react";
+import axios from "axios";
 
 const App = () => {
   const [data, setData] = useState([]);
@@ -11,9 +12,13 @@ const App = () => {
   }, []);
 
   const getData = async () => {
-    const response = await fetch("http://localhost:3000/nodes");
-    const nodes = await response.json();
-    setData(nodes);
+    try {
+      const response = await axios.get("http://localhost:3000/nodes");
+      const nodes = await response.data;
+      setData(nodes);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleAddNode = () => {
@@ -38,18 +43,51 @@ const App = () => {
     setNewNodeTitle("");
   };
 
-  const handleDeleteNode = (key) => {
-    //   console.log(`Deleting node with key: ${key}`);
-    //   const updatedTreeData = data.filter((node) => node.key !== key);
-    //   console.log(data);
-    //   setData(updatedTreeData);
+  const handleDeleteNode = async (node) => {
+    const removeNode = (nodes, targetKey) => {
+      for (let i = 0; i < nodes.length; i++) {
+        if (nodes[i].key === targetKey) {
+          nodes.splice(i, 1);
+          return true;
+        }
+        if (nodes[i].children && nodes[i].children.length > 0) {
+          const nodeRemoved = removeNode(nodes[i].children, targetKey);
+          if (nodeRemoved) return true;
+        }
+      }
+      return false;
+    };
 
     const newData = [...data];
 
-    // Remove the node with the specified key
-    removeNode(newData, key);
+    const ids = newData.map((item) => item.id);
 
-    setData(newData);
+    for (let i = 0; i < ids.length; i++) {
+      const id = ids[i];
+      try {
+        await axios.delete("http://localhost:3000/nodes/" + id);
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
+    }
+
+    removeNode(newData, node.key);
+
+    for (let i = 0; i < newData.length; i++) {
+      const id = newData[i];
+      try {
+        await axios.post("http://localhost:3000/nodes", id);
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const deleteNodeError = () => {
+    alert("Error deleting node");
   };
 
   const handleEditNode = (key, newTitle) => {
@@ -141,14 +179,15 @@ const App = () => {
         <button onClick={handleAddNode}>Add Node</button>
       </div>
       <Tree
-        data={data}
+        initialData={data}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         onDeleteNode={handleDeleteNode}
+        onDeleteNodeError={deleteNodeError}
         onEditNode={handleEditNode}
-        dragEnabled={false}
-        readOnly={true}
+        dragEnabled={true}
+        readOnly={false}
       />
     </div>
   );

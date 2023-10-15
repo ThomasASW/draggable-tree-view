@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
 
 const TreeNode = ({
   node,
@@ -6,6 +7,8 @@ const TreeNode = ({
   onDragOver,
   onDrop,
   onDelete,
+  onDeleteError,
+  removeNode,
   onEditNode,
   dragEnabled,
   readOnly,
@@ -91,7 +94,14 @@ const TreeNode = ({
             <i
               className="fa-solid fa-trash"
               style={{ color: "grey" }}
-              onClick={() => onDelete(node.key)}
+              onClick={async () => {
+                const result = await onDelete(node);
+                if (result) {
+                  removeNode(node);
+                } else {
+                  onDeleteError();
+                }
+              }}
             ></i>
             &emsp;
             <i
@@ -114,6 +124,8 @@ const TreeNode = ({
                 onDragOver={onDragOver}
                 onDrop={onDrop}
                 onDelete={onDelete}
+                onDeleteError={onDeleteError}
+                removeNode={removeNode}
                 onEditNode={onEditNode}
                 dragEnabled={dragEnabled}
                 readOnly={readOnly}
@@ -126,15 +138,40 @@ const TreeNode = ({
 };
 
 const Tree = ({
-  data,
+  initialData,
   onDragStart,
   onDragOver,
   onDrop,
   onDeleteNode,
+  onDeleteNodeError,
   onEditNode,
   dragEnabled,
   readOnly,
 }) => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    setData(initialData);
+  }, [initialData]);
+
+  const removeNode = (nodes, targetKey) => {
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i].key === targetKey) {
+        nodes.splice(i, 1);
+        setData(nodes);
+        return true;
+      }
+      if (nodes[i].children && nodes[i].children.length > 0) {
+        const nodeRemoved = removeNode(nodes[i].children, targetKey);
+        if (nodeRemoved) {
+          setData(nodes);
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
   return (
     <div>
       {data.map((node) => (
@@ -145,6 +182,8 @@ const Tree = ({
           onDragOver={onDragOver}
           onDrop={onDrop}
           onDelete={onDeleteNode}
+          onDeleteError={onDeleteNodeError}
+          removeNode={(node) => removeNode([...data], node.key)}
           onEditNode={onEditNode}
           dragEnabled={dragEnabled}
           readOnly={readOnly}
@@ -152,20 +191,6 @@ const Tree = ({
       ))}
     </div>
   );
-};
-
-const removeNode = (nodes, targetKey) => {
-  for (let i = 0; i < nodes.length; i++) {
-    if (nodes[i].key === targetKey) {
-      nodes.splice(i, 1);
-      return true;
-    }
-    if (nodes[i].children && nodes[i].children.length > 0) {
-      const nodeRemoved = removeNode(nodes[i].children, targetKey);
-      if (nodeRemoved) return true;
-    }
-  }
-  return false;
 };
 
 export default Tree;
