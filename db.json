@@ -20,23 +20,10 @@
       ]
     },
     {
-      "id": 4,
-      "key": "2",
-      "title": "Node 2",
-      "children": [
-        {
-          "id": 5,
-          "key": "2-1",
-          "title": "Node 2.1",
-          "children": []
-        },
-        {
-          "id": 6,
-          "key": "2-2",
-          "title": "Node 2.2",
-          "children": []
-        }
-      ]
+      "key": "1697365467009",
+      "title": "Node 6",
+      "children": [],
+      "id": 2
     }
   ]
 }

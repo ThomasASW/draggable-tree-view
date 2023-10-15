@@ -22,7 +22,6 @@ const App = () => {
   };
 
   const handleAddNode = () => {
-    // Create a new node with a unique key (you can use a library like uuid to generate unique keys)
     const newNode = {
       key: Date.now().toString(),
       title: newNodeTitle,
@@ -36,7 +35,10 @@ const App = () => {
       alert("Please enter different name");
       setNewNodeTitle("");
     } else {
-      setData([...data, newNode]);
+      axios
+        .post("http://localhost:3000/nodes", newNode)
+        .then((res) => setData([...data, res.data]))
+        .catch((e) => console.log(e));
     }
 
     // Clear the input field after adding the node
@@ -60,20 +62,22 @@ const App = () => {
 
     const newData = [...data];
 
-    const ids = newData.map((item) => item.id);
-
-    for (let i = 0; i < ids.length; i++) {
-      const id = ids[i];
-      try {
-        await axios.delete("http://localhost:3000/nodes/" + id);
-      } catch (error) {
-        console.log(error);
-        return false;
-      }
+    const res = await clearDB(newData);
+    if (!res) {
+      return false;
     }
 
     removeNode(newData, node.key);
 
+    const resu = await addToDB(newData);
+    if (!resu) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const addToDB = async (newData) => {
     for (let i = 0; i < newData.length; i++) {
       const id = newData[i];
       try {
@@ -86,14 +90,33 @@ const App = () => {
     return true;
   };
 
+  const clearDB = async (newData) => {
+    const ids = newData.map((item) => item.id);
+
+    for (let i = 0; i < ids.length; i++) {
+      const id = ids[i];
+      try {
+        await axios.delete("http://localhost:3000/nodes/" + id);
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
+    }
+    return true;
+  };
+
   const deleteNodeError = () => {
     alert("Error deleting node");
   };
 
-  const handleEditNode = (key, newTitle) => {
+  const editNodeError = () => {
+    alert("Error editing node");
+  };
+
+  const handleEditNode = async (node, newTitle) => {
     const editNode = (nodes) => {
       for (let i = 0; i < nodes.length; i++) {
-        if (nodes[i].key === key) {
+        if (nodes[i].key === node.key) {
           nodes[i].title = newTitle;
           return true;
         }
@@ -107,7 +130,17 @@ const App = () => {
 
     const newData = [...data];
     editNode(newData);
-    setData(newData);
+
+    const res = await clearDB(newData);
+    if (!res) {
+      return false;
+    }
+
+    const resu = await addToDB(newData);
+    if (!resu) {
+      return false;
+    }
+    return true;
   };
 
   var isDragging = false;
@@ -186,6 +219,7 @@ const App = () => {
         onDeleteNode={handleDeleteNode}
         onDeleteNodeError={deleteNodeError}
         onEditNode={handleEditNode}
+        onEditNodeError={editNodeError}
         dragEnabled={true}
         readOnly={false}
       />

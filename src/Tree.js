@@ -10,6 +10,8 @@ const TreeNode = ({
   onDeleteError,
   removeNode,
   onEditNode,
+  onEditNodeError,
+  editNode,
   dragEnabled,
   readOnly,
 }) => {
@@ -30,6 +32,9 @@ const TreeNode = ({
   }, [deletePending]);
 
   const deleteNode = async () => {
+    if (isDropdownOpen) {
+      toggleDropdown();
+    }
     const result = await onDelete(node);
     if (result) {
       removeNode(node);
@@ -42,14 +47,19 @@ const TreeNode = ({
     setEditedTitle(e.target.value);
   };
 
-  const handleEditSave = () => {
-    onEditNode(node.key, editedTitle);
+  const handleEditSave = async () => {
+    const result = await onEditNode(node, editedTitle);
+    if (result) {
+      editNode(node, editedTitle);
+    } else {
+      onEditNodeError();
+    }
     setEditing(false);
   };
 
   return (
     <div
-      draggable={dragEnabled && !deletePending}
+      draggable={dragEnabled && !deletePending && !isEditing}
       onDragStart={(e) => {
         console.log(node, "drag started");
         onDragStart(node, e);
@@ -60,7 +70,7 @@ const TreeNode = ({
       <div style={{ display: "flex", alignItems: "center" }}>
         <span
           onClick={() => {
-            if (!deletePending) {
+            if (!deletePending && !isEditing) {
               toggleDropdown();
             }
           }}
@@ -115,7 +125,7 @@ const TreeNode = ({
               className="fa-solid fa-trash"
               style={{ color: "grey" }}
               onClick={() => {
-                if (!deletePending) {
+                if (!deletePending && !isEditing) {
                   setDeletePending(true);
                 }
               }}
@@ -125,7 +135,10 @@ const TreeNode = ({
               className="fas fa-edit"
               style={{ color: "dark grey" }}
               onClick={() => {
-                if (!deletePending) {
+                if (!deletePending && !isEditing) {
+                  if (isDropdownOpen) {
+                    toggleDropdown();
+                  }
                   setEditing(true);
                 }
               }}
@@ -148,6 +161,8 @@ const TreeNode = ({
                 onDeleteError={onDeleteError}
                 removeNode={removeNode}
                 onEditNode={onEditNode}
+                onEditNodeError={onEditNodeError}
+                editNode={editNode}
                 dragEnabled={dragEnabled}
                 readOnly={readOnly}
               />
@@ -166,6 +181,7 @@ const Tree = ({
   onDeleteNode,
   onDeleteNodeError,
   onEditNode,
+  onEditNodeError,
   dragEnabled,
   readOnly,
 }) => {
@@ -193,6 +209,24 @@ const Tree = ({
     return false;
   };
 
+  const editNode = (nodes, key, newTitle) => {
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i].key === key) {
+        nodes[i].title = newTitle;
+        setData(nodes);
+        return true;
+      }
+      if (nodes[i].children && nodes[i].children.length > 0) {
+        const nodeEdited = editNode(nodes[i].children);
+        if (nodeEdited) {
+          setData(nodes);
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
   return (
     <div>
       {data.map((node) => (
@@ -206,6 +240,8 @@ const Tree = ({
           onDeleteError={onDeleteNodeError}
           removeNode={(node) => removeNode([...data], node.key)}
           onEditNode={onEditNode}
+          onEditNodeError={onEditNodeError}
+          editNode={(node, newTitle) => editNode([...data], node.key, newTitle)}
           dragEnabled={dragEnabled}
           readOnly={readOnly}
         />
