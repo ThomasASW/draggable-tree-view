@@ -19,8 +19,24 @@ const TreeNode = ({
     setDropdownOpen(!isDropdownOpen);
   };
 
+  const [deletePending, setDeletePending] = useState(false);
   const [isEditing, setEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(node.title);
+
+  useEffect(() => {
+    if (deletePending) {
+      deleteNode();
+    }
+  }, [deletePending]);
+
+  const deleteNode = async () => {
+    const result = await onDelete(node);
+    if (result) {
+      removeNode(node);
+    } else {
+      onDeleteError();
+    }
+  };
 
   const handleEditInputChange = (e) => {
     setEditedTitle(e.target.value);
@@ -33,7 +49,7 @@ const TreeNode = ({
 
   return (
     <div
-      draggable={dragEnabled}
+      draggable={dragEnabled && !deletePending}
       onDragStart={(e) => {
         console.log(node, "drag started");
         onDragStart(node, e);
@@ -43,7 +59,11 @@ const TreeNode = ({
     >
       <div style={{ display: "flex", alignItems: "center" }}>
         <span
-          onClick={toggleDropdown}
+          onClick={() => {
+            if (!deletePending) {
+              toggleDropdown();
+            }
+          }}
           style={{ cursor: "pointer", marginRight: "10px" }}
         >
           {isEditing ? (
@@ -94,12 +114,9 @@ const TreeNode = ({
             <i
               className="fa-solid fa-trash"
               style={{ color: "grey" }}
-              onClick={async () => {
-                const result = await onDelete(node);
-                if (result) {
-                  removeNode(node);
-                } else {
-                  onDeleteError();
+              onClick={() => {
+                if (!deletePending) {
+                  setDeletePending(true);
                 }
               }}
             ></i>
@@ -107,7 +124,11 @@ const TreeNode = ({
             <i
               className="fas fa-edit"
               style={{ color: "dark grey" }}
-              onClick={() => setEditing(true)}
+              onClick={() => {
+                if (!deletePending) {
+                  setEditing(true);
+                }
+              }}
             ></i>
           </>
         )}
