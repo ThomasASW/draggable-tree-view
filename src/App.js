@@ -1,49 +1,20 @@
 import React, { useState } from "react";
 import Tree from "./Tree";
+import { useEffect } from "react";
 
 const App = () => {
-  const initialData = [
-    {
-      key: "1",
-      title: "Node 1",
-      children: [
-        {
-          key: "1-1",
-          title: "Node 1.1",
-          children: [],
-        },
-        {
-          key: "1-2",
-          title: "Node 1.2",
-          children: [],
-        },
-      ],
-    },
-    {
-      key: "2",
-      title: "Node 2",
-      children: [
-        {
-          key: "2-1",
-          title: "Node 2.1",
-          children: [],
-        },
-        {
-          key: "2-2",
-          title: "Node 2.2",
-          children: [],
-        },
-      ],
-    },
-    {
-      key: "3",
-      title: "Node 3",
-      children: [],
-    },
-  ];
-
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]);
   const [newNodeTitle, setNewNodeTitle] = useState("");
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = async () => {
+    const response = await fetch("http://localhost:3000/nodes");
+    const nodes = await response.json();
+    setData(nodes);
+  };
 
   const handleAddNode = () => {
     // Create a new node with a unique key (you can use a library like uuid to generate unique keys)
@@ -72,19 +43,6 @@ const App = () => {
     //   const updatedTreeData = data.filter((node) => node.key !== key);
     //   console.log(data);
     //   setData(updatedTreeData);
-    const removeNode = (nodes, targetKey) => {
-      for (let i = 0; i < nodes.length; i++) {
-        if (nodes[i].key === targetKey) {
-          nodes.splice(i, 1);
-          return true;
-        }
-        if (nodes[i].children && nodes[i].children.length > 0) {
-          const nodeRemoved = removeNode(nodes[i].children, targetKey);
-          if (nodeRemoved) return true;
-        }
-      }
-      return false;
-    };
 
     const newData = [...data];
 

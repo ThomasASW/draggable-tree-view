@@ -1,0 +1,41 @@
+{
+    "nodes": [
+        {
+            "key": "1",
+            "title": "Node 1",
+            "children": [
+                {
+                    "key": "1-1",
+                    "title": "Node 1.1",
+                    "children": []
+                },
+                {
+                    "key": "1-2",
+                    "title": "Node 1.2",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "key": "2",
+            "title": "Node 2",
+            "children": [
+                {
+                    "key": "2-1",
+                    "title": "Node 2.1",
+                    "children": []
+                },
+                {
+                    "key": "2-2",
+                    "title": "Node 2.2",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "key": "3",
+            "title": "Node 3",
+            "children": []
+        }
+    ]
+}
