@@ -1,3 +1,4 @@
 {
-    "port": 4034
+    "port": 4034,
+    "middlewares": "./jsonServerMiddleware.js"
 }

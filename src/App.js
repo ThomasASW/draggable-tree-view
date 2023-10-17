@@ -94,7 +94,7 @@ const App = () => {
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i];
       try {
-        await axios.delete(`http://localhost:${port}/nodes` + id);
+        await axios.delete(`http://localhost:${port}/nodes/` + id);
       } catch (error) {
         console.log(error);
         return false;
