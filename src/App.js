@@ -22,15 +22,13 @@ const App = () => {
     }
   };
 
-  const handleAddNode = () => {
+  const handleAddNode = async () => {
     const newNode = {
       key: Date.now().toString(),
       title: newNodeTitle,
       children: [],
     };
 
-    // Update the data state to include the new node
-    // for (let i = 0; i < data.length; i++) {
     const title = data.find((data) => data.title === newNode.title);
     if (title) {
       alert("Please enter different name");
@@ -38,11 +36,10 @@ const App = () => {
     } else {
       axios
         .post(`http://localhost:${port}/nodes`, newNode)
-        .then((res) => setData([...data, res.data]))
+        .then((res) => getData())
         .catch((e) => console.log(e));
     }
 
-    // Clear the input field after adding the node
     setNewNodeTitle("");
   };
 
