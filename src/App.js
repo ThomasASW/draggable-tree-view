@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Tree from "./Tree";
 import { useEffect } from "react";
 import axios from "axios";
+const port = 4034;
 
 const App = () => {
   const [data, setData] = useState([]);
@@ -13,7 +14,7 @@ const App = () => {
 
   const getData = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/nodes");
+      const response = await axios.get(`http://localhost:${port}/nodes`);
       const nodes = await response.data;
       setData(nodes);
     } catch (error) {
@@ -36,7 +37,7 @@ const App = () => {
       setNewNodeTitle("");
     } else {
       axios
-        .post("http://localhost:3000/nodes", newNode)
+        .post(`http://localhost:${port}/nodes`, newNode)
         .then((res) => setData([...data, res.data]))
         .catch((e) => console.log(e));
     }
@@ -81,7 +82,7 @@ const App = () => {
     for (let i = 0; i < newData.length; i++) {
       const id = newData[i];
       try {
-        await axios.post("http://localhost:3000/nodes", id);
+        await axios.post(`http://localhost:${port}/nodes`, id);
       } catch (error) {
         console.log(error);
         return false;
@@ -96,7 +97,7 @@ const App = () => {
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i];
       try {
-        await axios.delete("http://localhost:3000/nodes/" + id);
+        await axios.delete(`http://localhost:${port}/nodes` + id);
       } catch (error) {
         console.log(error);
         return false;
