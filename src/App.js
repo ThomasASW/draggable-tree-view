@@ -16,6 +16,7 @@ const App = () => {
     try {
       const response = await axios.get(`http://localhost:${port}/nodes`);
       const nodes = await response.data;
+      console.log(nodes);
       setData(nodes);
     } catch (error) {
       console.log(error);
@@ -72,6 +73,7 @@ const App = () => {
       return false;
     }
 
+    getData();
     return true;
   };
 
@@ -79,6 +81,8 @@ const App = () => {
     for (let i = 0; i < newData.length; i++) {
       const id = newData[i];
       try {
+        console.log("add");
+        console.log(id);
         await axios.post(`http://localhost:${port}/nodes`, id);
       } catch (error) {
         console.log(error);
@@ -94,6 +98,8 @@ const App = () => {
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i];
       try {
+        console.log("delete");
+        console.log(id);
         await axios.delete(`http://localhost:${port}/nodes/` + id);
       } catch (error) {
         console.log(error);
@@ -138,6 +144,7 @@ const App = () => {
     if (!resu) {
       return false;
     }
+    getData();
     return true;
   };
 
