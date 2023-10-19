@@ -209,12 +209,13 @@ const App = () => {
       <br></br>
       <div>
         <input
+        id="addNode"
           type="text"
           value={newNodeTitle}
           onChange={(e) => setNewNodeTitle(e.target.value)}
           placeholder="Enter node title"
         />
-        <button onClick={handleAddNode}>Add Node</button>
+        <button id="addingNode" onClick={handleAddNode}>Add Node</button>
       </div>
       <Tree
         initialData={data}

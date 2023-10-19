@@ -1,3 +1,35 @@
 {
-  "nodes": []
+  "nodes": [
+    {
+      "id": 1,
+      "key": "1",
+      "title": "Node 1",
+      "children": [
+        {
+          "id": 2,
+          "key": "1-1",
+          "title": "Node 1.1",
+          "children": []
+        },
+        {
+          "id": 3,
+          "key": "1-2",
+          "title": "Node 1.2",
+          "children": []
+        }
+      ]
+    },
+    {
+      "key": "1697628715003",
+      "title": "Node 2",
+      "children": [],
+      "id": 4
+    },
+    {
+      "key": "1697699235979",
+      "title": "Node 5",
+      "children": [],
+      "id": 5
+    }
+  ]
 }
