@@ -80,6 +80,7 @@ const TreeNode = ({
             <div>
               <input
                 type="text"
+                placeholder="New title"
                 value={editedTitle}
                 onChange={handleEditInputChange}
               />
@@ -123,6 +124,7 @@ const TreeNode = ({
           <>
             <i
               className="fa-solid fa-trash"
+              data-testid={node.id + "delete"}
               style={{ color: "grey" }}
               onClick={() => {
                 if (!deletePending && !isEditing) {
@@ -133,6 +135,7 @@ const TreeNode = ({
             &emsp;
             <i
               className="fas fa-edit"
+              data-testid={node.id + "edit"}
               style={{ color: "dark grey" }}
               onClick={() => {
                 if (!deletePending && !isEditing) {

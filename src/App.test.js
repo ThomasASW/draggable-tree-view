@@ -1,6 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import App from "./App";
 import Tree from "./Tree";
+import userEvent from "@testing-library/user-event";
 
 const initialData = [
   {
@@ -85,4 +86,64 @@ test("render tree", () => {
   );
   const text = screen.getByText("Node 1");
   expect(text).toBeInTheDocument();
+});
+
+test("node delete", async () => {
+  render(
+    <Tree
+      initialData={initialData}
+      dragEnabled={true}
+      readOnly={false}
+      onEditNode={handleEditNode}
+      onEditNodeError={editNodeError}
+      onDeleteNode={handleDeleteNode}
+      onDeleteNodeError={deleteNodeError}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      onDragStart={handleDragStart}
+    />
+  );
+  const text = screen.getByTestId("1delete");
+  userEvent.click(text);
+  await waitFor(() => {
+    expect(handleDeleteNode).toHaveBeenCalled();
+  });
+});
+
+test("node edit", async () => {
+  render(
+    <Tree
+      initialData={initialData}
+      dragEnabled={true}
+      readOnly={false}
+      onEditNode={handleEditNode}
+      onEditNodeError={editNodeError}
+      onDeleteNode={handleDeleteNode}
+      onDeleteNodeError={deleteNodeError}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      onDragStart={handleDragStart}
+    />
+  );
+  const text = screen.getByTestId("1edit");
+  userEvent.click(text);
+  const save = screen.getByRole("button");
+  await waitFor(() => {
+    expect(save).toBeVisible();
+  });
+  await waitFor(() => {
+    expect(save).toHaveTextContent("Save");
+  });
+  const input = screen.getByPlaceholderText("New title");
+  await waitFor(() => {
+    expect(input.value).toBe("Node 1");
+  });
+  userEvent.type(input, "1");
+  await waitFor(() => {
+    expect(input.value).toBe("Node 11");
+  });
+  userEvent.click(save);
+  await waitFor(() => {
+    expect(handleEditNode).toHaveBeenCalled();
+  });
 });

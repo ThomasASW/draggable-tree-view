@@ -1,3 +1,10 @@
 {
-  "nodes": []
+  "nodes": [
+    {
+      "key": "1697624873661",
+      "title": "Node 2",
+      "children": [],
+      "id": 1
+    }
+  ]
 }
