@@ -59,6 +59,7 @@ const TreeNode = ({
 
   return (
     <div
+    id={node.id}
       draggable={dragEnabled && !deletePending && !isEditing}
       onDragStart={(e) => {
         console.log(node, "drag started");
@@ -79,12 +80,13 @@ const TreeNode = ({
           {isEditing ? (
             <div>
               <input
+              id="editNode"
                 type="text"
                 placeholder="New title"
                 value={editedTitle}
                 onChange={handleEditInputChange}
               />
-              <button onClick={handleEditSave}>Save</button>
+              <button id="editingNode" onClick={handleEditSave}>Save</button>
             </div>
           ) : (
             ""
@@ -115,14 +117,16 @@ const TreeNode = ({
             <i className="fa" style={{ marginLeft: "17px" }}></i>
           ) : (
             ""
-          )}
+          )}&nbsp;
+          {node.title}
         </span>
-        {node.title} &emsp;{" "}
+         &emsp;{" "}
         {readOnly ? (
           <></>
         ) : (
           <>
             <i
+            id={node.key}
               className="fa-solid fa-trash"
               data-testid={node.id + "delete"}
               style={{ color: "grey" }}
@@ -134,6 +138,7 @@ const TreeNode = ({
             ></i>
             &emsp;
             <i
+            id={node.id}
               className="fas fa-edit"
               data-testid={node.id + "edit"}
               style={{ color: "dark grey" }}
