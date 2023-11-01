@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { useEffect } from "react";
 
@@ -59,7 +60,7 @@ const TreeNode = ({
 
   return (
     <div
-    id={node.id}
+      id={node.id}
       draggable={dragEnabled && !deletePending && !isEditing}
       onDragStart={(e) => {
         console.log(node, "drag started");
@@ -80,18 +81,19 @@ const TreeNode = ({
           {isEditing ? (
             <div>
               <input
-              id="editNode"
+                id="editNode"
                 type="text"
                 placeholder="New title"
                 value={editedTitle}
                 onChange={handleEditInputChange}
               />
-              <button id="editingNode" onClick={handleEditSave}>Save</button>
+              <button id="editingNode" onClick={handleEditSave}>
+                Save
+              </button>
             </div>
           ) : (
             ""
           )}
-
           {node.children.length > 0 && isDropdownOpen ? (
             <i
               className="fa-solid fa-caret-down"
@@ -104,7 +106,6 @@ const TreeNode = ({
             // ></i>
             ""
           )}
-
           {node.children.length > 0 && !isDropdownOpen ? (
             <i
               className="fa-solid fa-caret-right"
@@ -122,13 +123,13 @@ const TreeNode = ({
           &nbsp;
           {node.title}
         </span>
-         &emsp;{" "}
+        &emsp;{" "}
         {readOnly ? (
           <></>
         ) : (
           <>
             <i
-            id={node.key}
+              id={node.key}
               className="fa-solid fa-trash"
               data-testid={node.id + "delete"}
               style={{ color: "grey" }}
@@ -140,7 +141,7 @@ const TreeNode = ({
             ></i>
             &emsp;
             <i
-            id={node.id}
+              id={node.id}
               className="fas fa-edit"
               data-testid={node.id + "edit"}
               style={{ color: "dark grey" }}
@@ -162,7 +163,7 @@ const TreeNode = ({
             node.children.length > 0 &&
             node.children.map((child) => (
               <TreeNode
-                key={child.key}
+                key={child.id}
                 node={child}
                 onDragStart={onDragStart}
                 onDragOver={onDragOver}
@@ -184,32 +185,92 @@ const TreeNode = ({
 };
 
 const Tree = ({
-  initialData,
-  onDragStart,
-  onDragOver,
-  onDrop,
-  onDeleteNode,
-  onDeleteNodeError,
-  onEditNode,
-  onEditNodeError,
+  addRef,
+  fetchNodesUrl,
+  addNodeUrl,
+  reOrderNodeUrl,
+  deleteNodeUrl,
+  editNodeUrl,
   dragEnabled,
   readOnly,
 }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    setData(initialData);
-  }, [initialData]);
+    fetchNodes();
+  }, []);
 
-  const removeNode = (nodes, targetKey) => {
+  const fetchNodes = async () => {
+    try {
+      const nodes = await axios.get(fetchNodesUrl);
+      setData(nodes.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addNode = async (title) => {
+    try {
+      await axios.post(addNodeUrl, { title: title });
+      fetchNodes();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    addRef.current = { addNodeFn: addNode };
+  }, [addNode]);
+
+  // DRAG START
+
+  var isDragging = false;
+
+  const handleDragStart = (draggedNode, e) => {
+    if (isDragging) {
+      return;
+    }
+
+    e.dataTransfer.setData("text/plain", JSON.stringify(draggedNode));
+    isDragging = true;
+  };
+
+  const handleDragOver = (targetNode, e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = async (targetNode, e) => {
+    e.preventDefault();
+
+    const draggedNode = JSON.parse(e.dataTransfer.getData("text/plain"));
+    console.log(draggedNode);
+    console.log(targetNode);
+
+    try {
+      await axios.post(reOrderNodeUrl, {
+        id: draggedNode.id,
+        parentId: targetNode.id,
+      });
+      fetchNodes();
+    } catch (error) {
+      console.log(error);
+      alert("Error rearranging nodes");
+    }
+  };
+
+  // DRAG END
+
+  // DELETE START
+
+  const removeNode = (nodes, target) => {
     for (let i = 0; i < nodes.length; i++) {
-      if (nodes[i].key === targetKey) {
+      if (nodes[i].id === target) {
         nodes.splice(i, 1);
         setData(nodes);
         return true;
       }
       if (nodes[i].children && nodes[i].children.length > 0) {
-        const nodeRemoved = removeNode(nodes[i].children, targetKey);
+        const nodeRemoved = removeNode(nodes[i].children, target);
         if (nodeRemoved) {
           setData(nodes);
           return true;
@@ -219,15 +280,30 @@ const Tree = ({
     return false;
   };
 
-  const editNode = (nodes, key, newTitle) => {
+  const onDeleteNode = async (node) => {
+    const nodeToDelete = { ...node };
+    try {
+      await axios.post(deleteNodeUrl, nodeToDelete);
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+    return true;
+  };
+
+  // DELETE END
+
+  // EDIT START
+
+  const editNode = (nodes, id, newTitle) => {
     for (let i = 0; i < nodes.length; i++) {
-      if (nodes[i].key === key) {
+      if (nodes[i].id === id) {
         nodes[i].title = newTitle;
         setData(nodes);
         return true;
       }
       if (nodes[i].children && nodes[i].children.length > 0) {
-        const nodeEdited = editNode(nodes[i].children);
+        const nodeEdited = editNode(nodes[i].children, id, newTitle);
         if (nodeEdited) {
           setData(nodes);
           return true;
@@ -237,21 +313,35 @@ const Tree = ({
     return false;
   };
 
+  const onEditNode = async (node, newTitle) => {
+    const editedNode = { ...node };
+    try {
+      editedNode.title = newTitle;
+      await axios.post(editNodeUrl, editedNode);
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+    return true;
+  };
+
+  // EDIT END
+
   return (
     <div>
       {data.map((node) => (
         <TreeNode
-          key={node.key}
+          key={node.id}
           node={node}
-          onDragStart={onDragStart}
-          onDragOver={onDragOver}
-          onDrop={onDrop}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
           onDelete={onDeleteNode}
-          onDeleteError={onDeleteNodeError}
-          removeNode={(node) => removeNode([...data], node.key)}
+          onDeleteError={() => alert("Error deleting node")}
+          removeNode={(node) => removeNode([...data], node.id)}
           onEditNode={onEditNode}
-          onEditNodeError={onEditNodeError}
-          editNode={(node, newTitle) => editNode([...data], node.key, newTitle)}
+          onEditNodeError={() => alert("Error editing node")}
+          editNode={(node, newTitle) => editNode([...data], node.id, newTitle)}
           dragEnabled={dragEnabled}
           readOnly={readOnly}
         />
