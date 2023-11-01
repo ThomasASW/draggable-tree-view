@@ -113,11 +113,13 @@ const TreeNode = ({
           ) : (
             ""
           )}
-          {node.children.length === 0 && !isDropdownOpen ? (
+          {node.children.length === 0 ? (
             <i className="fa" style={{ marginLeft: "17px" }}></i>
+          
           ) : (
             ""
-          )}&nbsp;
+          )}
+          &nbsp;
           {node.title}
         </span>
          &emsp;{" "}

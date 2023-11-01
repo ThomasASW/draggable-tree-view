@@ -163,7 +163,7 @@ const App = () => {
     e.preventDefault();
   };
 
-  const handleDrop = (targetNode, e) => {
+  const handleDrop = async (targetNode, e) => {
     e.preventDefault();
 
     const draggedNode = JSON.parse(e.dataTransfer.getData("text/plain"));
@@ -201,6 +201,8 @@ const App = () => {
     console.log(targetNode);
 
     setData(newData);
+    clearDB(data);
+    addToDB(data);
   };
 
   return (
@@ -209,13 +211,15 @@ const App = () => {
       <br></br>
       <div>
         <input
-        id="addNode"
+          id="addNode"
           type="text"
           value={newNodeTitle}
           onChange={(e) => setNewNodeTitle(e.target.value)}
           placeholder="Enter node title"
         />
-        <button id="addingNode" onClick={handleAddNode}>Add Node</button>
+        <button id="addingNode" onClick={handleAddNode}>
+          Add Node
+        </button>
       </div>
       <Tree
         initialData={data}
