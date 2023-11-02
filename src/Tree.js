@@ -215,6 +215,9 @@ const Tree = ({
       fetchNodes();
     } catch (error) {
       console.log(error);
+      if (error.response.status === 400) {
+        alert("Duplicate entry");
+      }
     }
   };
 
