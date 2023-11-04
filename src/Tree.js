@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useEffect } from "react";
-
+import {FaSortDown,FaCaretRight} from 'react-icons/fa';
 const TreeNode = ({
   node,
   onDragStart,
@@ -95,10 +95,11 @@ const TreeNode = ({
             ""
           )}
           {node.children.length > 0 && isDropdownOpen ? (
-            <i
-              className="fa-solid fa-caret-down"
-              style={{ marginLeft: "10px" }}
-            ></i>
+            // <i
+            //   className="fa-solid fa-caret-down"
+            //   style={{ marginLeft: "10px" }}
+            // ></i>
+            <FaSortDown style={{ marginLeft: "10px" }}/>
           ) : (
             // <i
             //   className="fa-solid fa-caret-right"
@@ -107,10 +108,11 @@ const TreeNode = ({
             ""
           )}
           {node.children.length > 0 && !isDropdownOpen ? (
-            <i
-              className="fa-solid fa-caret-right"
-              style={{ marginLeft: "10px" }}
-            ></i>
+            // <i
+            //   className="fa-solid fa-caret-right"
+            //   style={{ marginLeft: "10px" }}
+            // ></i>
+            <FaCaretRight style={{ marginLeft: "10px" }}/>
           ) : (
             ""
           )}
