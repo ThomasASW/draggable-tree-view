@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import Tree from "./Tree";
 
-
 const App = () => {
   const addRef = useRef(null);
   const [newNodeTitle, setNewNodeTitle] = useState("");
