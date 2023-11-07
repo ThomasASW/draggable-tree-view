@@ -1,7 +1,7 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import {FaSortDown,FaCaretRight} from 'react-icons/fa';
+import { FaSortDown, FaCaretRight } from "react-icons/fa";
+
 const TreeNode = ({
   node,
   onDragStart,
@@ -99,7 +99,7 @@ const TreeNode = ({
             //   className="fa-solid fa-caret-down"
             //   style={{ marginLeft: "10px" }}
             // ></i>
-            <FaSortDown style={{ marginLeft: "10px" }}/>
+            <FaSortDown style={{ marginLeft: "10px" }} />
           ) : (
             // <i
             //   className="fa-solid fa-caret-right"
@@ -112,13 +112,12 @@ const TreeNode = ({
             //   className="fa-solid fa-caret-right"
             //   style={{ marginLeft: "10px" }}
             // ></i>
-            <FaCaretRight style={{ marginLeft: "10px" }}/>
+            <FaCaretRight style={{ marginLeft: "10px" }} />
           ) : (
             ""
           )}
           {node.children.length === 0 ? (
             <i className="fa" style={{ marginLeft: "17px" }}></i>
-          
           ) : (
             ""
           )}
@@ -204,8 +203,9 @@ const Tree = ({
 
   const fetchNodes = async () => {
     try {
-      const nodes = await axios.get(fetchNodesUrl);
-      setData(nodes.data);
+      const response = await fetch(fetchNodesUrl);
+      const nodes = await response.json();
+      setData(nodes);
     } catch (error) {
       console.log(error);
     }
@@ -213,7 +213,13 @@ const Tree = ({
 
   const addNode = async (title) => {
     try {
-      await axios.post(addNodeUrl, { title: title });
+      await fetch(addNodeUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: title }),
+      });
       fetchNodes();
     } catch (error) {
       console.log(error);
@@ -252,9 +258,15 @@ const Tree = ({
     console.log(targetNode);
 
     try {
-      await axios.post(reOrderNodeUrl, {
-        id: draggedNode.id,
-        parentId: targetNode.id,
+      await fetch(reOrderNodeUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: draggedNode.id,
+          parentId: targetNode.id,
+        }),
       });
       fetchNodes();
     } catch (error) {
@@ -288,7 +300,13 @@ const Tree = ({
   const onDeleteNode = async (node) => {
     const nodeToDelete = { ...node };
     try {
-      await axios.post(deleteNodeUrl, nodeToDelete);
+      await fetch(deleteNodeUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(nodeToDelete),
+      });
     } catch (error) {
       console.log(error);
       return false;
@@ -322,7 +340,13 @@ const Tree = ({
     const editedNode = { ...node };
     try {
       editedNode.title = newTitle;
-      await axios.post(editNodeUrl, editedNode);
+      await fetch(editNodeUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editedNode),
+      });
     } catch (error) {
       console.log(error);
       return false;
