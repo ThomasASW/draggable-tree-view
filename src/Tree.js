@@ -205,6 +205,7 @@ const Tree = ({
     try {
       const response = await fetch(fetchNodesUrl);
       const nodes = await response.json();
+      console.log(nodes);
       setData(nodes);
     } catch (error) {
       console.log(error);
@@ -213,19 +214,19 @@ const Tree = ({
 
   const addNode = async (title) => {
     try {
-      await fetch(addNodeUrl, {
+      const result = await fetch(addNodeUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ title: title }),
       });
+      if (result.status === 400) {
+        alert("Duplicate entry");
+      }
       fetchNodes();
     } catch (error) {
       console.log(error);
-      if (error.response.status === 400) {
-        alert("Duplicate entry");
-      }
     }
   };
 
