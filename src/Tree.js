@@ -60,7 +60,7 @@ const TreeNode = ({
 
   return (
     <div
-      id={node.id}
+      id={node.title}
       draggable={dragEnabled && !deletePending && !isEditing}
       onDragStart={(e) => {
         console.log(node, "drag started");
@@ -117,7 +117,7 @@ const TreeNode = ({
             ""
           )}
           {node.children.length === 0 ? (
-            <i className="fa" style={{ marginLeft: "17px" }}></i>
+            <i className="fa" style={{ marginLeft: "24px" }}></i>
           ) : (
             ""
           )}
@@ -130,7 +130,7 @@ const TreeNode = ({
         ) : (
           <>
             <i
-              id={node.key}
+              id={node.id+"del"}
               className="fa-solid fa-trash"
               data-testid={node.id + "delete"}
               style={{ color: "grey" }}
@@ -142,7 +142,7 @@ const TreeNode = ({
             ></i>
             &emsp;
             <i
-              id={node.id}
+              id={node.id+"edit"}
               className="fas fa-edit"
               data-testid={node.id + "edit"}
               style={{ color: "dark grey" }}
@@ -211,23 +211,43 @@ const Tree = ({
     }
   };
 
+  // const addNode = async (title) => {
+  //   try {
+  //     await fetch(addNodeUrl, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ title: title }),
+  //     });
+  //     fetchNodes();
+  //   } catch (error) {
+  //     console.log(error);
+  //     if (error.response.status === 400) {
+  //       alert("Duplicate entry");
+  //     }
+  //   }
+  // };
+
   const addNode = async (title) => {
     try {
-      await fetch(addNodeUrl, {
+      const result = await fetch(addNodeUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ title: title }),
       });
+      if (result.status === 400) {
+        alert("Duplicate entry");
+      }
       fetchNodes();
     } catch (error) {
       console.log(error);
-      if (error.response.status === 400) {
-        alert("Duplicate entry");
-      }
     }
   };
+
+
 
   useEffect(() => {
     addRef.current = { addNodeFn: addNode };
