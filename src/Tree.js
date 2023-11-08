@@ -205,6 +205,7 @@ const Tree = ({
     try {
       const response = await fetch(fetchNodesUrl);
       const nodes = await response.json();
+      console.log(nodes);
       setData(nodes);
     } catch (error) {
       console.log(error);
