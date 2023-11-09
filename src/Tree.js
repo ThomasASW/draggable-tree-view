@@ -212,24 +212,6 @@ const Tree = ({
     }
   };
 
-  // const addNode = async (title) => {
-  //   try {
-  //     await fetch(addNodeUrl, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ title: title }),
-  //     });
-  //     fetchNodes();
-  //   } catch (error) {
-  //     console.log(error);
-  //     if (error.response.status === 400) {
-  //       alert("Duplicate entry");
-  //     }
-  //   }
-  // };
-
   const addNode = async (title) => {
     try {
       const result = await fetch(addNodeUrl, {
@@ -276,13 +258,12 @@ const Tree = ({
   const handleDrop = async (targetNode, e) => {
     e.preventDefault();
 
-    console.log(targetNode, "drop");
-
     if (dropped) {
       return;
     }
 
     dropped = true;
+    console.log(targetNode, "drop");
 
     const draggedNode = JSON.parse(e.dataTransfer.getData("text/plain"));
 
