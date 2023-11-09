@@ -255,11 +255,14 @@ const Tree = ({
   // DRAG START
 
   var isDragging = false;
+  var dropped = false;
 
   const handleDragStart = (draggedNode, e) => {
     if (isDragging) {
       return;
     }
+
+    console.log(draggedNode, "dragStart");
 
     e.dataTransfer.setData("text/plain", JSON.stringify(draggedNode));
     isDragging = true;
@@ -267,14 +270,21 @@ const Tree = ({
 
   const handleDragOver = (targetNode, e) => {
     e.preventDefault();
+    console.log(targetNode, "dragOver");
   };
 
   const handleDrop = async (targetNode, e) => {
     e.preventDefault();
 
+    console.log(targetNode, "drop");
+
+    if (dropped) {
+      return;
+    }
+
+    dropped = true;
+
     const draggedNode = JSON.parse(e.dataTransfer.getData("text/plain"));
-    console.log(draggedNode);
-    console.log(targetNode);
 
     try {
       await fetch(reOrderNodeUrl, {
