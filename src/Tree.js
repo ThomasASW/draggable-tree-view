@@ -130,7 +130,7 @@ const TreeNode = ({
         ) : (
           <>
             <i
-              id={node.id+"del"}
+              id={node.id + "del"}
               className="fa-solid fa-trash"
               data-testid={node.id + "delete"}
               style={{ color: "grey" }}
@@ -142,7 +142,7 @@ const TreeNode = ({
             ></i>
             &emsp;
             <i
-              id={node.id+"edit"}
+              id={node.id + "edit"}
               className="fas fa-edit"
               data-testid={node.id + "edit"}
               style={{ color: "dark grey" }}
@@ -247,8 +247,6 @@ const Tree = ({
       console.log(error);
     }
   };
-
-
 
   useEffect(() => {
     addRef.current = { addNodeFn: addNode };
