@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { FaSortDown, FaCaretRight } from "react-icons/fa";
-
+import { FaSortDown, FaCaretRight,FaTrash} from "react-icons/fa";
+import { HiPencilAlt } from "react-icons/hi";
 const TreeNode = ({
   node,
   onDragStart,
@@ -129,7 +129,7 @@ const TreeNode = ({
           <></>
         ) : (
           <>
-            <i
+            <FaTrash
               id={node.title + "del"}
               className="fa-solid fa-trash"
               data-testid={node.id + "delete"}
@@ -139,13 +139,13 @@ const TreeNode = ({
                   setDeletePending(true);
                 }
               }}
-            ></i>
+            />
             &emsp;
-            <i
+            <HiPencilAlt
               id={node.title + "edit"}
               className="fas fa-edit"
               data-testid={node.id + "edit"}
-              style={{ color: "dark grey" }}
+              style={{ color: "dark grey" ,fontSize:18}}
               onClick={() => {
                 if (!deletePending && !isEditing) {
                   if (isDropdownOpen) {
@@ -154,7 +154,7 @@ const TreeNode = ({
                   setEditing(true);
                 }
               }}
-            ></i>
+            />
           </>
         )}
       </div>

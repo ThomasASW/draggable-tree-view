@@ -1,6 +1,6 @@
 {
-  "name": "draggable-tree-view",
-  "version": "0.1.0",
+  "name": "view-draggable-tree",
+  "version": "0.1.1",
   "private": false,
   "main": "./lib/Tree.js",
   "dependencies": {
