@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { FaSortDown, FaCaretRight,FaTrash} from "react-icons/fa";
+import { FaSortDown, FaCaretRight, FaTrash } from "react-icons/fa";
 import { HiPencilAlt } from "react-icons/hi";
+
 const TreeNode = ({
   node,
+  toggle,
   onDragStart,
   onDragOver,
   onDrop,
@@ -17,6 +19,14 @@ const TreeNode = ({
   readOnly,
 }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    if (toggle === 1) {
+      setDropdownOpen(true);
+    } else if (toggle === 0) {
+      setDropdownOpen(false);
+    }
+  }, [toggle]);
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
@@ -145,7 +155,7 @@ const TreeNode = ({
               id={node.title + "edit"}
               className="fas fa-edit"
               data-testid={node.id + "edit"}
-              style={{ color: "dark grey" ,fontSize:18}}
+              style={{ color: "dark grey", fontSize: 18 }}
               onClick={() => {
                 if (!deletePending && !isEditing) {
                   if (isDropdownOpen) {
@@ -166,6 +176,7 @@ const TreeNode = ({
               <TreeNode
                 key={child.id}
                 node={child}
+                toggle={toggle}
                 onDragStart={onDragStart}
                 onDragOver={onDragOver}
                 onDrop={onDrop}
@@ -196,6 +207,7 @@ const Tree = ({
   readOnly,
 }) => {
   const [data, setData] = useState([]);
+  const [toggle, setToggle] = useState(-1);
 
   useEffect(() => {
     fetchNodes();
@@ -368,9 +380,21 @@ const Tree = ({
 
   return (
     <div>
+      <div>
+        {toggle === 1 ? (
+          <div style={{ margin: "10px" }}>
+            <button onClick={() => setToggle(0)}>Collapse All</button>
+          </div>
+        ) : (
+          <div style={{ margin: "10px" }}>
+            <button onClick={() => setToggle(1)}>Expand All</button>
+          </div>
+        )}
+      </div>
       {data.map((node) => (
         <TreeNode
           key={node.id}
+          toggle={toggle}
           node={node}
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
