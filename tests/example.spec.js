@@ -16,7 +16,7 @@ await page.locator("#addingNode").click();
 // });
 await expect(addedNode).toBeVisible();
 await page.waitForTimeout(5000);
-await page.locator("//div[@id='root'] //div[@id='Node 4']//i[@id='Node 4edit']").click();
+await page.locator("//div[@id='root'] //div[@id='Node 10']//i[@id='Node 10edit']").click();
 await page.locator("#editNode").fill("Node 12");
 await page.locator("#editingNode").click();
 await expect(editedNode).toBeVisible();
